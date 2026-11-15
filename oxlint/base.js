@@ -60,6 +60,10 @@ const base = {
     'jsdoc/require-throws-type': 'off',
     'jsdoc/require-yields-type': 'off',
 
+    // ---- formatter-owned spelling: Oxfmt prints these, a lint rule must not disagree ----
+    // Oxfmt lowercases hex digits (0x5b); this rule wants them uppercase.
+    'unicorn/number-literal-case': 'off',
+
     // ---- pedantic rules with airbnb options ----
     'max-classes-per-file': ['error', 1],
     eqeqeq: ['error', 'always'],
@@ -195,7 +199,6 @@ const base = {
     'unicorn/no-unreadable-array-destructuring': 'error',
     'unicorn/no-useless-collection-argument': 'error',
     'unicorn/no-zero-fractions': 'error',
-    'unicorn/number-literal-case': 'error',
     'unicorn/prefer-array-index-of': 'error',
     'unicorn/prefer-class-fields': 'error',
     'unicorn/prefer-default-parameters': 'error',

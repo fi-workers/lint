@@ -59,10 +59,28 @@ fi-workers 레포가 함께 쓰는 엄격한 린트·포맷·TypeScript 설정�
 4. 버전을 정확히 고정해서 설치합니다. 도구들은 이 패키지가 고정한 버전과 같게 맞춥니다(`peerDependencies` 참고).
 
    ```sh
-   pnpm add -D -E @fi-workers/lint@0.1.0 oxlint@1.93.0 oxlint-tsgolint@7.0.2007 oxfmt@0.78.0 typescript@7.0.2 knip@6.45.1 @ast-grep/cli@0.51.2
+   pnpm add -D -E @fi-workers/lint@0.1.1 oxlint@1.93.0 oxlint-tsgolint@7.0.2007 oxfmt@0.78.0 typescript@7.0.2 knip@6.45.1 @ast-grep/cli@0.51.2
    ```
 
    pnpm의 `minimumReleaseAge`를 켠 레포는 새 버전을 올린 직후 하루 동안 설치가 막힐 수 있습니다. 그때는 `pnpm-workspace.yaml`의 `minimumReleaseAgeExclude`에 `@fi-workers/lint`를 넣습니다.
+
+5. 버전 갱신 봇을 쓰면 레지스트리를 알려 줍니다. Dependabot은 `.github/dependabot.yml`에 `registries`를 둡니다(토큰은 `read:packages` 권한이 있는 PAT를 Dependabot secret으로 등록). Renovate는 `hostRules`에 `npm.pkg.github.com`과 토큰을 둡니다. 봇이 없으면 이 레포의 릴리스를 보고 직접 올립니다.
+
+   ```yaml
+   # .github/dependabot.yml
+   version: 2
+   registries:
+     github-packages:
+       type: npm-registry
+       url: https://npm.pkg.github.com
+       token: ${{ secrets.PACKAGES_READ_TOKEN }}
+   updates:
+     - package-ecosystem: npm
+       directory: /
+       registries: [github-packages]
+       schedule:
+         interval: weekly
+   ```
 
 ## 사용법
 
