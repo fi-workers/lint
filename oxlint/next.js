@@ -20,7 +20,12 @@ const next = {
         '**/middleware.ts',
         '**/proxy.ts',
       ],
-      rules: { 'import/no-default-export': 'off' },
+      rules: {
+        'import/no-default-export': 'off',
+        // Route files may re-export their component as the default (`export { default } from`),
+        // which unicorn/prefer-export-from asks for.
+        'no-restricted-exports': ['error', { restrictedNamedExports: ['then'] }],
+      },
     },
   ],
 };

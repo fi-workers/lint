@@ -56,10 +56,19 @@ fi-workers 레포가 함께 쓰는 엄격한 린트·포맷·TypeScript 설정�
 
    다른 레포의 `GITHUB_TOKEN`이 패키지를 읽으려면 패키지 설정(Manage Actions access)에 그 레포가 등록되어 있거나 패키지가 공개여야 합니다.
 
+   Docker 이미지 안에서 `pnpm install`이나 Next 빌드를 하면(Next는 tsconfig의 `extends`로 이 패키지를 읽음) 이미지 빌드에도 토큰이 필요합니다. 이미지 레이어에 남지 않도록 BuildKit secret으로 넘기고, 변수 이름에 `/`가 있어 셸에서 직접 쓸 수 없으니 `env`로 전달합니다.
+
+   ```dockerfile
+   # docker build --secret id=npm_token,env=NODE_AUTH_TOKEN .
+   RUN --mount=type=secret,id=npm_token \
+       env "pnpm_config_//npm.pkg.github.com/:_authToken=$(cat /run/secrets/npm_token)" \
+       pnpm install --frozen-lockfile
+   ```
+
 4. 버전을 정확히 고정해서 설치합니다. 도구들은 이 패키지가 고정한 버전과 같게 맞춥니다(`peerDependencies` 참고).
 
    ```sh
-   pnpm add -D -E @fi-workers/lint@0.1.1 oxlint@1.93.0 oxlint-tsgolint@7.0.2007 oxfmt@0.78.0 typescript@7.0.2 knip@6.45.1 @ast-grep/cli@0.51.2
+   pnpm add -D -E @fi-workers/lint@0.1.2 oxlint@1.93.0 oxlint-tsgolint@7.0.2007 oxfmt@0.78.0 typescript@7.0.2 knip@6.45.1 @ast-grep/cli@0.51.2
    ```
 
    pnpm의 `minimumReleaseAge`를 켠 레포는 새 버전을 올린 직후 하루 동안 설치가 막힐 수 있습니다. 그때는 `pnpm-workspace.yaml`의 `minimumReleaseAgeExclude`에 `@fi-workers/lint`를 넣습니다.
