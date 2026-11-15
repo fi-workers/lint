@@ -1,0 +1,5 @@
+id: no-with-statement
+valid:
+  - "const { a } = obj;"
+invalid:
+  - "with (obj) { use(a); }"

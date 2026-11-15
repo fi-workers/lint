@@ -1,0 +1,4 @@
+{
+  "extends": "@fi-workers/lint/tsconfig/base.json",
+  "include": ["src"]
+}

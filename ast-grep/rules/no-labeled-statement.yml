@@ -1,0 +1,8 @@
+id: no-labeled-statement
+language: tsx
+severity: error
+message: Do not use labels. Extract a function and return early instead.
+rule:
+  kind: labeled_statement
+ignores:
+  - "**/node_modules/**"
