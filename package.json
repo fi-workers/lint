@@ -1,6 +1,6 @@
 {
   "name": "@fi-workers/lint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "fi-workers shared strict lint, format and TypeScript settings (Oxlint, Oxfmt, knip, ast-grep)",
   "license": "MIT",
   "repository": {

@@ -57,7 +57,7 @@ const expectedFailures: Readonly<Record<string, readonly string[]>> = {
 };
 
 await describe('pass fixtures report nothing', () => {
-  for (const fixture of ['base-pass', 'react-pass', 'node-pass']) {
+  for (const fixture of ['base-pass', 'react-pass', 'node-pass', 'formatted-pass']) {
     void it(fixture, () => {
       assert.deepEqual([...lint(fixture)], []);
     });
