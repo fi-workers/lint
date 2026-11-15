@@ -75,7 +75,20 @@ const base = {
     'arrow-body-style': ['error', 'as-needed'],
     curly: ['error', 'all'],
     'class-methods-use-this': 'error',
-    'default-case': 'error',
+    // tsconfig noImplicitReturns (reported through typeCheck) covers this and understands
+    // exhaustive switches; the lint rule flags a switch over a union that returns in every case.
+    'typescript/consistent-return': 'off',
+    // default-case is replaced by the type-aware switch-exhaustiveness-check below: a switch over a
+    // union must name every member and needs no default; any other switch must have one.
+    'default-case': 'off',
+    'typescript/switch-exhaustiveness-check': [
+      'error',
+      {
+        allowDefaultCaseForExhaustiveSwitch: false,
+        considerDefaultExhaustiveForUnions: false,
+        requireDefaultForNonUnion: true,
+      },
+    ],
     'default-case-last': 'error',
     'default-param-last': 'error',
     'grouped-accessor-pairs': 'error',
@@ -231,7 +244,12 @@ const base = {
   overrides: [
     {
       files: defaultExportAllowed,
-      rules: { 'import/no-default-export': 'off' },
+      rules: {
+        'import/no-default-export': 'off',
+        // A default export may then be a re-export (`export { config as default } from`), which
+        // unicorn/prefer-export-from asks for.
+        'no-restricted-exports': ['error', { restrictedNamedExports: ['then'] }],
+      },
     },
     {
       files: ['**/*.cjs', '**/*.cts'],

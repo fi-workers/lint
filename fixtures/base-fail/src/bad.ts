@@ -11,3 +11,14 @@ export default function bad(items: string[], options: { count: number }): string
   const value: any = first;
   return 'total: ' + String(value);
 }
+
+type Mode = 'light' | 'dark';
+
+export function missing(mode: Mode): string {
+  switch (mode) {
+    case 'light': {
+      return 'L';
+    }
+  }
+  return '';
+}

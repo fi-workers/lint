@@ -41,6 +41,7 @@ const expectedFailures: Readonly<Record<string, readonly string[]>> = {
     'typescript(no-explicit-any)',
     // type-aware (tsgolint)
     'typescript(no-floating-promises)',
+    'typescript(switch-exhaustiveness-check)',
     // typeCheck: noUncheckedIndexedAccess from the shared tsconfig
     'typescript(TS2322)',
   ],
@@ -57,7 +58,7 @@ const expectedFailures: Readonly<Record<string, readonly string[]>> = {
 };
 
 await describe('pass fixtures report nothing', () => {
-  for (const fixture of ['base-pass', 'react-pass', 'node-pass', 'formatted-pass']) {
+  for (const fixture of ['base-pass', 'react-pass', 'node-pass', 'formatted-pass', 'next-pass']) {
     void it(fixture, () => {
       assert.deepEqual([...lint(fixture)], []);
     });

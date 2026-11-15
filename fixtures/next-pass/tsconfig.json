@@ -1,0 +1,4 @@
+{
+  "extends": "@fi-workers/lint/tsconfig/react.json",
+  "include": ["src"]
+}
