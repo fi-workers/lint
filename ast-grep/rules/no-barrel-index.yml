@@ -1,0 +1,17 @@
+id: no-barrel-index
+language: tsx
+severity: error
+message: Barrel index files are banned. Import from the module that defines the value.
+note: Re-export hubs hide dependency cycles and slow down bundlers and type checking.
+rule:
+  kind: export_statement
+  has:
+    field: source
+    kind: string
+files:
+  - '**/index.ts'
+  - '**/index.tsx'
+  - '**/index.js'
+  - '**/index.mjs'
+ignores:
+  - '**/node_modules/**'

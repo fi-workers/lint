@@ -1,0 +1,9 @@
+id: no-ts-enum
+language: tsx
+severity: error
+message: Do not use TypeScript enums. Use an `as const` object and a derived union type.
+note: Enums are not erasable syntax (see `erasableSyntaxOnly` in the shared tsconfig).
+rule:
+  kind: enum_declaration
+ignores:
+  - '**/node_modules/**'

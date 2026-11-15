@@ -1,0 +1,8 @@
+id: no-barrel-index
+valid:
+  - 'export const value = 1;'
+  - 'import { a } from "./a";'
+invalid:
+  - 'export * from "./a";'
+  - 'export * as a from "./a";'
+  - 'export { a } from "./a";'

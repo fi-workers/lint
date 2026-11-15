@@ -1,0 +1,7 @@
+id: no-ts-enum
+valid:
+  - 'const Status = { Active: "active" } as const;'
+invalid:
+  - 'enum Status { Active }'
+  - 'const enum Status { Active }'
+  - 'export enum Status { Active = "active" }'
