@@ -3,4 +3,4 @@ ruleDirs:
 testConfigs:
   - testDir: ast-grep/rule-tests
 languageGlobs:
-  tsx: ["*.ts", "*.mts", "*.cts", "*.js", "*.mjs", "*.cjs"]
+  tsx: ['*.ts', '*.mts', '*.cts', '*.js', '*.mjs', '*.cjs']

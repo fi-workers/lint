@@ -8,15 +8,15 @@
 const knip = {
   ignoreExportsUsedInFile: true,
   rules: {
-    binaries: "error",
-    dependencies: "error",
-    devDependencies: "error",
-    exports: "error",
-    files: "error",
-    types: "error",
-    unlisted: "error",
-    unresolved: "error",
-    duplicates: "error",
+    binaries: 'error',
+    dependencies: 'error',
+    devDependencies: 'error',
+    exports: 'error',
+    files: 'error',
+    types: 'error',
+    unlisted: 'error',
+    unresolved: 'error',
+    duplicates: 'error',
   },
 };
 

@@ -1,6 +1,6 @@
 id: no-barrel-index
 valid:
-  - "export const value = 1;"
+  - 'export const value = 1;'
   - 'import { a } from "./a";'
 invalid:
   - 'export * from "./a";'

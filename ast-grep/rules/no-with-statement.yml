@@ -5,4 +5,4 @@ message: Do not use `with`; it makes scope resolution ambiguous.
 rule:
   kind: with_statement
 ignores:
-  - "**/node_modules/**"
+  - '**/node_modules/**'

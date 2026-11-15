@@ -1,5 +1,5 @@
 id: no-labeled-statement
 valid:
-  - "for (const row of rows) { if (row.done) { break; } }"
+  - 'for (const row of rows) { if (row.done) { break; } }'
 invalid:
-  - "outer: for (const row of rows) { for (const cell of row) { if (cell) { break outer; } } }"
+  - 'outer: for (const row of rows) { for (const cell of row) { if (cell) { break outer; } } }'

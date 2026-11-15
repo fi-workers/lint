@@ -9,5 +9,5 @@ export default function bad(items: string[], options: { count: number }): string
     Promise.resolve(1);
   }
   const value: any = first;
-  return "total: " + String(value);
+  return 'total: ' + String(value);
 }

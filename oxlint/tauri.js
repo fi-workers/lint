@@ -8,17 +8,12 @@
 /** @type {import("oxlint").OxlintConfig} */
 const tauri = {
   rules: {
-    "import/no-nodejs-modules": "error",
+    'import/no-nodejs-modules': 'error',
   },
   overrides: [
     {
-      files: [
-        "**/*.config.{js,mjs,cjs,ts,mts,cts}",
-        "**/scripts/**",
-        "**/*.test.{ts,tsx}",
-        "**/*.spec.{ts,tsx}",
-      ],
-      rules: { "import/no-nodejs-modules": "off" },
+      files: ['**/*.config.{js,mjs,cjs,ts,mts,cts}', '**/scripts/**', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+      rules: { 'import/no-nodejs-modules': 'off' },
     },
   ],
 };

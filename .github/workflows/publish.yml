@@ -4,7 +4,7 @@ name: Publish
 # No artifacts or caches: the package is a handful of config files.
 on:
   push:
-    tags: ["v*"]
+    tags: ['v*']
 
 permissions:
   contents: read

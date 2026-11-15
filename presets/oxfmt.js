@@ -6,10 +6,10 @@
 
 /** @type {import("oxfmt").OxfmtConfig} */
 const oxfmt = {
-  printWidth: 100,
+  printWidth: 120,
   semi: true,
-  singleQuote: false,
-  trailingComma: "all",
+  singleQuote: true,
+  trailingComma: 'all',
   sortImports: {},
   sortPackageJson: true,
 };

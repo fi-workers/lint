@@ -1,7 +1,7 @@
 id: no-for-in
 valid:
-  - "for (const item of items) { use(item); }"
-  - "for (const [key, value] of Object.entries(record)) { use(key, value); }"
+  - 'for (const item of items) { use(item); }'
+  - 'for (const [key, value] of Object.entries(record)) { use(key, value); }'
 invalid:
-  - "for (const key in record) { use(key); }"
-  - "for (key in record) { use(key); }"
+  - 'for (const key in record) { use(key); }'
+  - 'for (key in record) { use(key); }'

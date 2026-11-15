@@ -66,10 +66,10 @@ fi-workers 레포가 함께 쓰는 엄격한 린트·포맷·TypeScript 설정�
 
 ```ts
 // oxlint.config.ts
-import base from "@fi-workers/lint/oxlint";
-import react from "@fi-workers/lint/oxlint/react";
-import test from "@fi-workers/lint/oxlint/test";
-import { defineConfig } from "oxlint";
+import base from '@fi-workers/lint/oxlint';
+import react from '@fi-workers/lint/oxlint/react';
+import test from '@fi-workers/lint/oxlint/test';
+import { defineConfig } from 'oxlint';
 
 export default defineConfig({
   extends: [base, react, test],
@@ -78,9 +78,9 @@ export default defineConfig({
     typeAware: true,
     typeCheck: true,
     denyWarnings: true,
-    reportUnusedDisableDirectives: "error",
+    reportUnusedDisableDirectives: 'error',
   },
-  ignorePatterns: ["dist/**", "**/generated/**"],
+  ignorePatterns: ['dist/**', '**/generated/**'],
 });
 ```
 
@@ -113,18 +113,18 @@ export default defineConfig({
 
 ```ts
 // oxfmt.config.ts
-import shared from "@fi-workers/lint/oxfmt";
-import { defineConfig } from "oxfmt";
+import shared from '@fi-workers/lint/oxfmt';
+import { defineConfig } from 'oxfmt';
 
-export default defineConfig({ ...shared, ignorePatterns: ["pnpm-lock.yaml"] });
+export default defineConfig({ ...shared, ignorePatterns: ['pnpm-lock.yaml'] });
 ```
 
 ### knip
 
 ```ts
 // knip.config.ts
-import shared from "@fi-workers/lint/knip";
-import type { KnipConfiguration } from "knip";
+import shared from '@fi-workers/lint/knip';
+import type { KnipConfiguration } from 'knip';
 
 const config: KnipConfiguration = { ...shared };
 export default config;
@@ -138,7 +138,7 @@ ruleDirs:
   - node_modules/@fi-workers/lint/ast-grep/rules
   - rules # 레포 고유 규칙
 languageGlobs:
-  tsx: ["*.ts", "*.mts", "*.cts"] # 규칙은 tsx 문법으로 작성되어 있음
+  tsx: ['*.ts', '*.mts', '*.cts'] # 규칙은 tsx 문법으로 작성되어 있음
 ```
 
 규칙 id가 레포 고유 규칙과 겹치면 ast-grep이 오류를 냅니다. 같은 규칙이 레포에 있으면 레포 쪽을 지웁니다.

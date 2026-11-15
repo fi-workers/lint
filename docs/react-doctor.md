@@ -6,7 +6,7 @@
 
 ## 원칙
 
-- 버전을 고정합니다: `npx -y react-doctor@0.9.23`.
+- 버전을 고정하고 `pnpm dlx`로 실행합니다: `pnpm dlx react-doctor@0.9.23`. `package.json`에 `devEngines.packageManager`로 pnpm을 지정한 레포에서는 `npx`가 실행을 거부합니다.
 - 외부 전송을 끕니다: `--no-score`(점수 API, 공유 URL, 크래시 리포트를 끔)와 `--no-supply-chain`(외부 의존성 검사를 끔).
 - 점수는 게이트로 쓰지 않습니다. 게이트는 "새 이슈 0건"입니다.
 - 도입은 두 단계로 합니다.
@@ -16,11 +16,11 @@
 ## 기준선 만들기
 
 ```sh
-npx -y react-doctor@0.9.23 <앱 폴더> --no-score --no-supply-chain --yes \
+pnpm dlx react-doctor@0.9.23 <앱 폴더> --no-score --no-supply-chain --yes \
   --json --json-out .react-doctor/baseline.json
 ```
 
-`.react-doctor/baseline.json`을 커밋합니다. 기존 이슈를 고치면 같은 명령으로 다시 만듭니다.
+보고서에는 실행한 컴퓨터의 절대 경로가 들어가므로 레포 루트 기준 상대 경로로 바꾼 뒤(`sed -i '' "s#$PWD/##g" .react-doctor/baseline.json`) 커밋합니다. 기존 이슈를 고치면 같은 명령으로 다시 만듭니다.
 
 ## GitHub Actions 예시
 
@@ -31,15 +31,16 @@ react-doctor:
     contents: read
   steps:
     - uses: actions/checkout@<sha> # fetch-depth: 0 이면 --scope changed 도 쓸 수 있음
+    - uses: pnpm/action-setup@<sha>
     - uses: actions/setup-node@<sha>
       with:
         node-version-file: .nvmrc
     # 기준선 기간: --blocking none. 게이트로 올릴 때 error 로 바꿉니다.
     - run: >
-        npx -y react-doctor@0.9.23 <앱 폴더>
+        pnpm dlx react-doctor@0.9.23 <앱 폴더>
         --no-score --no-supply-chain --yes
         --baseline .react-doctor/baseline.json
         --blocking none
 ```
 
-react-doctor는 자체 Oxlint와 TypeScript 버전을 따로 들고 오므로 레포의 툴체인과 섞이지 않습니다. 의존성 설치(`pnpm install`) 없이 `npx`로 격리해서 실행합니다.
+react-doctor는 자체 Oxlint와 TypeScript 버전을 따로 들고 오므로 레포의 툴체인과 섞이지 않습니다. 의존성 설치(`pnpm install`) 없이 `pnpm dlx`로 격리해서 실행합니다.

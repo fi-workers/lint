@@ -2,11 +2,11 @@ id: no-for-in
 language: tsx
 severity: error
 message: Do not use `for...in`. Iterate `Object.keys`, `Object.entries` or `Object.values` instead.
-note: "`for...in` also walks inherited enumerable properties."
+note: '`for...in` also walks inherited enumerable properties.'
 rule:
   kind: for_in_statement
   has:
     field: operator
     regex: ^in$
 ignores:
-  - "**/node_modules/**"
+  - '**/node_modules/**'

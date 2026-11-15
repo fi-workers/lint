@@ -8,9 +8,9 @@ const node = {
   env: { node: true },
   rules: {
     // CLIs and servers write to stdout/stderr on purpose.
-    "no-console": "off",
-    "node/no-new-require": "error",
-    "node/no-path-concat": "error",
+    'no-console': 'off',
+    'node/no-new-require': 'error',
+    'node/no-path-concat': 'error',
   },
 };
 

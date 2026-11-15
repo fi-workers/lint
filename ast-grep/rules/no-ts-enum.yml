@@ -6,4 +6,4 @@ note: Enums are not erasable syntax (see `erasableSyntaxOnly` in the shared tsco
 rule:
   kind: enum_declaration
 ignores:
-  - "**/node_modules/**"
+  - '**/node_modules/**'

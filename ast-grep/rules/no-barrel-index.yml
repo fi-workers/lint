@@ -9,9 +9,9 @@ rule:
     field: source
     kind: string
 files:
-  - "**/index.ts"
-  - "**/index.tsx"
-  - "**/index.js"
-  - "**/index.mjs"
+  - '**/index.ts'
+  - '**/index.tsx'
+  - '**/index.js'
+  - '**/index.mjs'
 ignores:
-  - "**/node_modules/**"
+  - '**/node_modules/**'
