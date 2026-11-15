@@ -24,31 +24,37 @@ fi-workers 레포가 함께 쓰는 엄격한 린트·포맷·TypeScript 설정�
 
 패키지는 GitHub Packages의 npm 레지스트리(`npm.pkg.github.com`)에만 올라갑니다. npm 공개 레지스트리에는 없습니다. GitHub Packages는 공개 패키지도 설치할 때 토큰이 필요합니다.
 
-1. 레포 루트에 `.npmrc`를 둡니다.
+1. 레포 루트 `.npmrc`에는 레지스트리 주소만 둡니다. pnpm 12는 레포 안 `.npmrc`에 적힌 인증 정보(`_authToken` 등)를 보안상 읽지 않습니다(환경 변수 치환도 안 함).
 
    ```ini
    @fi-workers:registry=https://npm.pkg.github.com
-   //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
    ```
 
-2. 로컬에서는 `read:packages` 권한이 있는 토큰을 `NODE_AUTH_TOKEN`으로 넣습니다.
+2. 로컬에서는 `read:packages` 권한이 있는 토큰을 사용자 설정(pnpm `auth.ini`)에 한 번 저장합니다.
 
    ```sh
    gh auth refresh -s read:packages   # 한 번만
-   export NODE_AUTH_TOKEN="$(gh auth token)"
+   pnpm config set //npm.pkg.github.com/:_authToken "$(gh auth token)"
    ```
 
-3. CI(GitHub Actions)에서는 `GITHUB_TOKEN`을 씁니다.
+3. CI(GitHub Actions)에서는 `GITHUB_TOKEN`을 씁니다. `actions/setup-node`의 `registry-url`/`scope`가 사용자 수준 `.npmrc`를 만들어 주고, 거기서 `NODE_AUTH_TOKEN`을 읽습니다.
 
    ```yaml
    permissions:
      contents: read
      packages: read
+   env:
+     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    # ...
+   - uses: actions/setup-node@<sha>
+     with:
+       node-version-file: .nvmrc
+       registry-url: https://npm.pkg.github.com
+       scope: '@fi-workers'
    - run: pnpm install --frozen-lockfile
-     env:
-       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    ```
+
+   다른 레포의 `GITHUB_TOKEN`이 패키지를 읽으려면 패키지 설정(Manage Actions access)에 그 레포가 등록되어 있거나 패키지가 공개여야 합니다.
 
 4. 버전을 정확히 고정해서 설치합니다. 도구들은 이 패키지가 고정한 버전과 같게 맞춥니다(`peerDependencies` 참고).
 
@@ -160,7 +166,7 @@ React 레포는 [react-doctor 작업](./docs/react-doctor.md)을 더합니다.
 2. **TS API가 필요한 도구를 정리합니다.** TS 7에는 예전 프로그래매틱 API가 없습니다. typescript-eslint, ts-jest, ts-morph, 일부 코드 생성기처럼 `typescript` 패키지를 import하는 도구는 대체 도구로 바꾸거나(예: ts-jest → Vitest), 그 도구만 쓰도록 `typescript@6`을 별칭으로 따로 설치합니다(`"typescript-6": "npm:typescript@6.0.x"`). 타입 검사와 린트는 TS 7로만 합니다.
 3. **ESLint와 Prettier를 지웁니다.** `eslint*`, `@typescript-eslint/*`, `prettier*` 패키지와 설정 파일, 에디터 설정을 지우고 이 패키지의 Oxlint·Oxfmt 설정으로 바꿉니다. 첫 포맷은 커밋을 따로 나눕니다.
 4. **Next.js는 빌드 타입 검사를 끕니다.** CI의 Oxlint `typeCheck`가 타입을 검사하므로 `next.config.ts`에 `typescript: { ignoreBuildErrors: true }`를 둡니다. CI에서 Oxlint를 빼면 타입 검사도 사라진다는 뜻이니 게이트에서 빼지 않습니다.
-5. **위반을 고칩니다.** `oxlint --fix`로 기계적인 것부터 고칩니다. 양이 많은 규칙은 레포 루트 설정에서 좁은 범위(`overrides`의 `files`)로 끄고, 이유 주석과 추적 이슈를 남긴 뒤 나눠서 갚습니다.
+5. **위반을 고칩니다.** `oxlint --fix`로 기계적인 것부터 고칩니다. 자동 수정은 규칙끼리 이어서 고치다 보면 쓰이지 않는 import나 타입 오류(예: `getAttribute('data-x')` → `dataset.x`가 `Element`에서 실패)를 남길 수 있으니, 수정 뒤 `oxlint`를 한 번 더 돌리고 테스트를 실행합니다. 양이 많은 규칙은 레포 루트 설정에서 좁은 범위(`overrides`의 `files`)로 끄고, 이유 주석과 추적 이슈를 남긴 뒤 나눠서 갚습니다.
 6. **CI를 바꿉니다.** 위 게이트를 넣고, `tsc --noEmit` 단계는 지웁니다.
 
 ## 이 레포 개발
