@@ -1,6 +1,9 @@
 name: Publish
 
-# Pushing a tag `vX.Y.Z` publishes that version to GitHub Packages.
+# Pushing a tag `vX.Y.Z` publishes that version to the fi-workers npm
+# registry (Forgejo), and for now also to GitHub Packages.
+# Each publish passes --registry explicitly; package.json has no
+# publishConfig.registry, so the two targets cannot override each other.
 # No artifacts or caches: the package is a handful of config files.
 on:
   push:
@@ -26,9 +29,27 @@ jobs:
         run: |
           version="$(node -p 'require("./package.json").version')"
           test "v$version" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != v$version"; exit 1; }
+      - name: Publish to packages.mocco.club
+        env:
+          FORGEJO_PACKAGES_TOKEN: ${{ secrets.FORGEJO_PACKAGES_TOKEN }}
+        run: |
+          set -euo pipefail
+          umask 077
+          npmrc="$RUNNER_TEMP/forgejo.npmrc"
+          echo "//packages.mocco.club/api/packages/fi-workers/npm/:_authToken=\${FORGEJO_PACKAGES_TOKEN}" > "$npmrc"
+          NPM_CONFIG_USERCONFIG="$npmrc" pnpm publish --no-git-checks \
+            --registry=https://packages.mocco.club/api/packages/fi-workers/npm/
+      # Kept until the GitHub Packages copies see no downloads and are removed.
+      # GitHub Packages shares the org's storage quota, so a failure here must
+      # not fail the release that already reached packages.mocco.club.
       - name: Publish to GitHub Packages
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}" > "$RUNNER_TEMP/.npmrc"
-          NPM_CONFIG_USERCONFIG="$RUNNER_TEMP/.npmrc" pnpm publish --no-git-checks
+          set -euo pipefail
+          umask 077
+          npmrc="$RUNNER_TEMP/github.npmrc"
+          echo "//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}" > "$npmrc"
+          NPM_CONFIG_USERCONFIG="$npmrc" pnpm publish --no-git-checks \
+            --registry=https://npm.pkg.github.com

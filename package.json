@@ -34,9 +34,6 @@
     "./tsconfig/*": "./tsconfig/*",
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
