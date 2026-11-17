@@ -20,52 +20,24 @@ fi-workers 레포가 함께 쓰는 엄격한 린트·포맷·TypeScript 설정�
 - **Oxlint 카테고리:** correctness, suspicious, perf, pedantic은 카테고리 전체를 error로 켭니다. style과 restriction은 airbnb 스타일 가이드와 typescript-eslint의 strict/stylistic type-checked 세트에 해당하는 규칙만 골라서 켭니다. nursery는 끕니다(typescript-eslint strict 세트에 속하는 `no-unnecessary-condition`, `prefer-optional-chain` 두 개만 예외).
 - **끈 규칙은 이유를 적습니다.** `oxlint/base.js`의 주석을 보세요. 레포 사정으로 규칙을 더 꺼야 하면 공용 프리셋이 아니라 그 레포 설정에서, 주석과 추적 이슈를 남기고 끕니다.
 
-## 설치 (GitHub Packages)
+## 설치
 
-패키지는 GitHub Packages의 npm 레지스트리(`npm.pkg.github.com`)에만 올라갑니다. npm 공개 레지스트리에는 없습니다. GitHub Packages는 공개 패키지도 설치할 때 토큰이 필요합니다.
+패키지는 fi-workers npm 레지스트리(`https://packages.mocco.club/api/packages/fi-workers/npm/`)에 올라갑니다. npm 공개 레지스트리에는 없습니다. 이 레지스트리는 공개라서 설치할 때 토큰이 필요 없습니다. 로컬, CI, Docker 빌드 모두 같습니다.
 
-1. 레포 루트 `.npmrc`에는 레지스트리 주소만 둡니다. pnpm 12는 레포 안 `.npmrc`에 적힌 인증 정보(`_authToken` 등)를 보안상 읽지 않습니다(환경 변수 치환도 안 함).
+1. 레포 루트 `.npmrc`에 `@fi-workers` 스코프의 레지스트리를 적습니다. yarn berry는 `.yarnrc.yml`의 `npmScopes`에 적습니다.
 
    ```ini
-   @fi-workers:registry=https://npm.pkg.github.com
+   @fi-workers:registry=https://packages.mocco.club/api/packages/fi-workers/npm/
    ```
-
-2. 로컬에서는 `read:packages` 권한이 있는 토큰을 사용자 설정(pnpm `auth.ini`)에 한 번 저장합니다.
-
-   ```sh
-   gh auth refresh -s read:packages   # 한 번만
-   pnpm config set //npm.pkg.github.com/:_authToken "$(gh auth token)"
-   ```
-
-3. CI(GitHub Actions)에서는 `GITHUB_TOKEN`을 씁니다. `actions/setup-node`의 `registry-url`/`scope`가 사용자 수준 `.npmrc`를 만들어 주고, 거기서 `NODE_AUTH_TOKEN`을 읽습니다.
 
    ```yaml
-   permissions:
-     contents: read
-     packages: read
-   env:
-     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-   # ...
-   - uses: actions/setup-node@<sha>
-     with:
-       node-version-file: .nvmrc
-       registry-url: https://npm.pkg.github.com
-       scope: '@fi-workers'
-   - run: pnpm install --frozen-lockfile
+   # .yarnrc.yml
+   npmScopes:
+     fi-workers:
+       npmRegistryServer: 'https://packages.mocco.club/api/packages/fi-workers/npm/'
    ```
 
-   다른 레포의 `GITHUB_TOKEN`이 패키지를 읽으려면 패키지 설정(Manage Actions access)에 그 레포가 등록되어 있거나 패키지가 공개여야 합니다.
-
-   Docker 이미지 안에서 `pnpm install`이나 Next 빌드를 하면(Next는 tsconfig의 `extends`로 이 패키지를 읽음) 이미지 빌드에도 토큰이 필요합니다. 이미지 레이어에 남지 않도록 BuildKit secret으로 넘기고, 변수 이름에 `/`가 있어 셸에서 직접 쓸 수 없으니 `env`로 전달합니다.
-
-   ```dockerfile
-   # docker build --secret id=npm_token,env=NODE_AUTH_TOKEN .
-   RUN --mount=type=secret,id=npm_token \
-       env "pnpm_config_//npm.pkg.github.com/:_authToken=$(cat /run/secrets/npm_token)" \
-       pnpm install --frozen-lockfile
-   ```
-
-4. 버전을 정확히 고정해서 설치합니다. 도구들은 이 패키지가 고정한 버전과 같게 맞춥니다(`peerDependencies` 참고).
+2. 버전을 정확히 고정해서 설치합니다. 도구들은 이 패키지가 고정한 버전과 같게 맞춥니다(`peerDependencies` 참고).
 
    ```sh
    pnpm add -D -E @fi-workers/lint@0.1.2 oxlint@1.93.0 oxlint-tsgolint@7.0.2007 oxfmt@0.78.0 typescript@7.0.2 knip@6.45.1 @ast-grep/cli@0.51.2
@@ -73,23 +45,9 @@ fi-workers 레포가 함께 쓰는 엄격한 린트·포맷·TypeScript 설정�
 
    pnpm의 `minimumReleaseAge`를 켠 레포는 새 버전을 올린 직후 하루 동안 설치가 막힐 수 있습니다. 그때는 `pnpm-workspace.yaml`의 `minimumReleaseAgeExclude`에 `@fi-workers/lint`를 넣습니다.
 
-5. 버전 갱신 봇을 쓰면 레지스트리를 알려 줍니다. Dependabot은 `.github/dependabot.yml`에 `registries`를 둡니다(토큰은 `read:packages` 권한이 있는 PAT를 Dependabot secret으로 등록). Renovate는 `hostRules`에 `npm.pkg.github.com`과 토큰을 둡니다. 봇이 없으면 이 레포의 릴리스를 보고 직접 올립니다.
+3. 버전 갱신 봇은 레포의 `.npmrc`에서 스코프 레지스트리를 읽습니다. 토큰은 필요 없습니다. 봇이 없으면 이 레포의 릴리스를 보고 직접 올립니다.
 
-   ```yaml
-   # .github/dependabot.yml
-   version: 2
-   registries:
-     github-packages:
-       type: npm-registry
-       url: https://npm.pkg.github.com
-       token: ${{ secrets.PACKAGES_READ_TOKEN }}
-   updates:
-     - package-ecosystem: npm
-       directory: /
-       registries: [github-packages]
-       schedule:
-         interval: weekly
-   ```
+예전에는 GitHub Packages(`npm.pkg.github.com`)에서 토큰을 받아 설치했습니다. 그 설정(`_authToken`, `NODE_AUTH_TOKEN`, `packages: read`, Docker의 `npm_token` secret)은 더 필요 없으니 지웁니다. lockfile에 GitHub 주소가 남아 있으면 `@fi-workers/*` 항목만 다시 받아 새 주소로 바꿉니다. 내용(integrity)은 같습니다.
 
 ## 사용법
 
@@ -205,7 +163,7 @@ pnpm verify   # 포맷, 자체 린트, knip, ast-grep 규칙·테스트, 프리�
 
 `fixtures/*-pass`는 오류가 하나도 없어야 하고, `fixtures/*-fail`은 `test/presets.test.ts`에 적힌 규칙을 모두 보고해야 합니다. 규칙을 바꾸면 fixture도 같이 고칩니다.
 
-배포: `package.json`의 `version`을 올리는 PR을 머지한 뒤 `vX.Y.Z` 태그를 push하면 `Publish` 워크플로가 GitHub Packages에 올립니다.
+배포: `package.json`의 `version`을 올리는 PR을 머지한 뒤 `vX.Y.Z` 태그를 push하면 `Publish` 워크플로가 fi-workers npm 레지스트리에 올립니다. 옛 설치처가 정리될 때까지 GitHub Packages에도 함께 올립니다. 게시 토큰은 레포 secret `FORGEJO_PACKAGES_TOKEN`입니다.
 
 ## 라이선스
 
